@@ -1,11 +1,11 @@
 package com.github.snuk87.keycloak.kafka;
 
-import org.jboss.logging.Logger;
-import org.keycloak.Config.Scope;
-import org.keycloak.events.EventListenerProvider;
-import org.keycloak.events.EventListenerProviderFactory;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.KeycloakSessionFactory;
+		import org.jboss.logging.Logger;
+		import org.keycloak.Config.Scope;
+		import org.keycloak.events.EventListenerProvider;
+		import org.keycloak.events.EventListenerProviderFactory;
+		import org.keycloak.models.KeycloakSession;
+		import org.keycloak.models.KeycloakSessionFactory;
 
 public class KafkaEventListenerProviderFactory implements EventListenerProviderFactory {
 
@@ -38,27 +38,28 @@ public class KafkaEventListenerProviderFactory implements EventListenerProviderF
 	@Override
 	public void init(Scope config) {
 		LOG.info("Init kafka module ...");
-		topicEvents = config.get("topicEvents");
-		clientId = config.get("clientId", "keycloak");
-		bootstrapServers = config.get("bootstrapServers");
-		topicAdminEvents = config.get("topicAdminEvents");
 
-		String eventsString = config.get("events");
+
+		topicEvents = System.getenv("KAFKA_TOPIC_EVENTS");
+		clientId = System.getenv("KAFKA_CLIENT_ID");
+		bootstrapServers = System.getenv("KAFKA_SERVER");
+		topicAdminEvents = System.getenv("KAFKA_ADMIN_TOPIC_EVENTS");
+		String eventsString = System.getenv("KAFKA_EVENTS");
 
 		if (eventsString != null) {
 			events = eventsString.split(",");
 		}
 
 		if (topicEvents == null) {
-			throw new NullPointerException("topic must not be null.");
+			topicEvents = "keycloak_events";
 		}
 
 		if (clientId == null) {
-			throw new NullPointerException("clientId must not be null.");
+			clientId = "keycloak";
 		}
 
 		if (bootstrapServers == null) {
-			throw new NullPointerException("bootstrapServers must not be null");
+			bootstrapServers = "localhost:9092";
 		}
 
 		if (events == null || events.length == 0) {
